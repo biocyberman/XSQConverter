@@ -27,6 +27,7 @@ public class ProcessingOptions {
     private Integer readLenghtOutputCutoff;
     
     private Boolean outputLeadingBaseAndColorCall1 = false;
+    private Boolean outputToStdOut = false;    
     
     //subset     
     private Boolean barCodeSubset = false;   
@@ -180,9 +181,15 @@ public class ProcessingOptions {
 
     public void setOutputLeadingBaseAndColorCall1(Boolean outputLeadingBaseAndColorCall1) {
         this.outputLeadingBaseAndColorCall1 = outputLeadingBaseAndColorCall1;
+    }    
+    public Boolean getOutputToStdOut() {
+        return outputToStdOut;
     }
-    
-    
+
+    public void setOutputToStdOut(Boolean outputToStdOut) {
+        this.outputToStdOut = outputToStdOut;
+    }
+        
     
     
     

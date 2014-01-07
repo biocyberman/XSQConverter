@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,6 +40,7 @@ public class FastQWriter {
     private List<File> writtenFastQFiles;
     
     private Boolean resetReadStartPositionsTo0 = false;
+    private Boolean outputToStdOut = false;
 
     /**
      * Writes FastQentries to an output file.
@@ -49,11 +51,11 @@ public class FastQWriter {
      * @param laneNr laneNr that should be used in the name of the fastq files
      * @param tagName tag name that should be used in the name of the fastq files
      */
-    public FastQWriter(String writerId, File baseOutputDir, long chunkSize) {
-        
+    public FastQWriter(String writerId, File baseOutputDir, long chunkSize, Boolean outputtarget) {
+         
         this.chunkSize = chunkSize;
         this.writerId = writerId;
-        
+        this.outputToStdOut = outputtarget;
         writtenFastQFiles = new ArrayList<File>();
         
        
@@ -116,23 +118,30 @@ public class FastQWriter {
 
     
     private void openNextChunk(StringBuilder chunkFastQFileName, boolean containsSequence) {
-    	File outPutChunk = new File(outputDirReads, chunkFastQFileName.toString());
-        writtenFastQFiles.add(outPutChunk);
-        FileWriter fstream;
-        try {
-            fstream = new FileWriter(outPutChunk);
-            if(containsSequence){
-            	fastqOut = new BufferedWriter(fstream);        
-            }else{
-            	qualOut = new BufferedWriter(fstream);     
+        if (outputToStdOut) {
+                 fastqOut = new BufferedWriter(new OutputStreamWriter(System.out));   
+       }else {
+            File outPutChunk = new File(outputDirReads, chunkFastQFileName.toString());
+            writtenFastQFiles.add(outPutChunk);
+            FileWriter fstream;
+
+            try {
+                    fstream = new FileWriter(outPutChunk);   
+                    if(containsSequence){
+                         fastqOut = new BufferedWriter(fstream);         
+                    }else{
+                        qualOut = new BufferedWriter(fstream);     
+                    }
+
+            } catch (IOException ex) {
+                Logger.getLogger(XSQConverterGit.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(XSQConverterGit.class.getName()).log(Level.SEVERE, null, ex);
-        }
 		
 	}
+    }
 
 	private StringBuilder getChunkFileName(String suffix) {
+            
     	StringBuilder chunkFileName = new StringBuilder();
         chunkFileName.append("p");
         chunkFileName.append(chunkCounter);
@@ -200,7 +209,7 @@ public class FastQWriter {
     
     public void printNrReadsWritten()
     {
-        System.out.println(writerId+"\t"+readCounter);           
+        System.err.println(writerId+"\t"+readCounter);           
     }
 
     public String getWriterId() {

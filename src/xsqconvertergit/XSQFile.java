@@ -55,7 +55,7 @@ public class XSQFile {
             if(outPutWriter.checkExistingOutput(library))
             {
                 outPutWriter.removeFastQWriters(library);
-                System.out.println("Not processing library " + library.getNameAndBarCode() + " because existing fastq output is found for this library. ");
+                System.err.println("Not processing library " + library.getNameAndBarCode() + " because existing fastq output is found for this library. ");
             }
             else
             {
@@ -262,7 +262,7 @@ public class XSQFile {
         }
         if(librariesSubSet.isEmpty())
         {
-            System.out.println("No libraries found in the xsq file with the name(s): "+ librariesSubSetMap.keySet());
+            System.err.println("No libraries found in the xsq file with the name(s): "+ librariesSubSetMap.keySet());
             System.exit(0);
         } 
         return librariesSubSet;        
@@ -284,7 +284,7 @@ public class XSQFile {
         }
         if(librariesSubSet.isEmpty())
         {
-            System.out.println("No libraries found in the xsq file with the barcode(s): "+ barCodesMap.keySet());
+            System.err.println("No libraries found in the xsq file with the barcode(s): "+ barCodesMap.keySet());
             System.exit(0);
         } 
         return librariesSubSet;  
@@ -308,7 +308,7 @@ public class XSQFile {
         }
         if(librariesSubSet.isEmpty())
         {
-            System.out.println("No non unassigned and non unclassified libraries found");
+            System.err.println("No non unassigned and non unclassified libraries found");
             System.exit(0);
         } 
         return librariesSubSet;       
@@ -352,7 +352,7 @@ public class XSQFile {
         outPutWriter.addFastQFilesToLibrary(libraries);        
         
         
-        System.out.println("Processed "+libraries.size() + " libraries and a total of "+totalReadCounter+" reads");  
+        System.err.println("Processed "+libraries.size() + " libraries and a total of "+totalReadCounter+" reads");  
         printMetrics();
         
     }    
@@ -409,7 +409,7 @@ public class XSQFile {
         for (int i=0; i<n; i++)
         {
             obj = (HObject)members.get(i);
-            System.out.println(indent+obj);
+            System.err.println(indent+obj);
             if (obj instanceof Group)
             {
                 printGroup((Group)obj, indent);
@@ -425,15 +425,15 @@ public class XSQFile {
         if (rootGroup == null)
             return;
         
-//        System.out.println("Displayed are all sub nodes of the root node. At least nodes containing the word Indexing and RunMetadata are reserved nodes that don´t contain libraries");
+//        System.err.println("Displayed are all sub nodes of the root node. At least nodes containing the word Indexing and RunMetadata are reserved nodes that don´t contain libraries");
 //        for (Object library : getLibraries(rootGroup, true) )
 //        {
-//            System.out.println(library);            
+//            System.err.println(library);            
 //        } 
         
         for(String libraryName : getLibraryNames().keySet())
         {
-            System.out.println(libraryName);     
+            System.err.println(libraryName);     
         }        
         
     }
@@ -456,8 +456,8 @@ public class XSQFile {
         
         Boolean appendMetricsToExistingFile = processingOptions.getOverwriteExistingOutput()==false;
         
-        System.out.println("Metrics file content:");
-        System.out.println(metricsString.toString());
+        System.err.println("Metrics file content:");
+        System.err.println(metricsString.toString());
         
         
         try {

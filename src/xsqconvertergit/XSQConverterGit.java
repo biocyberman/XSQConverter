@@ -39,6 +39,7 @@ public class XSQConverterGit {
         options.addOption("i","input", true, "XSQ input file path.");
         options.addOption("o","output", true, "output directory path");
         options.addOption("c","chunk", true, "output fastq chunksize. Default is 1000000");
+        options.addOption("s","stdout", false, "output converted results to std output");
         options.addOption("l","library", true, "library which should be converted. For multiple libraries use this argument multiple times");
         options.addOption("b","barcode", true, "barcodes which should be converted. For multiple barcodes use this argument multiple times");
         options.addOption("d","display", false, "display all libraries names and quit without processing");
@@ -83,7 +84,7 @@ public class XSQConverterGit {
         
         if(!requiredOptionsAreSet(cmd))
         {
-            System.out.println("Not all required options are set");
+            System.err.println("Not all required options are set");
             printHelp(options);           
         }         
         
@@ -113,7 +114,7 @@ public class XSQConverterGit {
         {
             if(processingOptions.getFastQDialect().equals(FastQDialect.bwa))
             {
-                System.out.println("Can't output leading base and color call for BWA output because of double encoding of color calls. ");
+                System.err.println("Can't output leading base and color call for BWA output because of double encoding of color calls. ");
                 System.exit(1);
             }
             else
@@ -121,7 +122,18 @@ public class XSQConverterGit {
                 processingOptions.setOutputLeadingBaseAndColorCall1(true);
             }  
         }
-        
+        if(cmd.hasOption("s"))
+        {
+            if(processingOptions.getFastQDialect().equals(FastQDialect.csfasta))
+            {
+                System.err.println("Can't pipe conversion output when it is in CSFASTA format");
+                System.exit(1);
+            }
+            else
+            {
+                processingOptions.setOutputToStdOut(true);
+            }  
+        }        
                      
         processingOptions.setChunkSize( new Long(cmd.getOptionValue("c", "1000000")));     
         
@@ -150,8 +162,8 @@ public class XSQConverterGit {
         Integer readLenghtCutoff = new Integer(cmd.getOptionValue("x", "1000000000"));
         processingOptions.setReadLenghtOutputCutoff(readLenghtCutoff);
         
-        System.out.println("Input file = " + xsqFilePath);
-        System.out.println("Output directory = " + outputPath);
+        System.err.println("Input file = " + xsqFilePath);
+        System.err.println("Output directory = " + outputPath);
          
          
         
@@ -223,7 +235,7 @@ public class XSQConverterGit {
         File xsqFile = new File(xsqFilePath);
         if(!xsqFile.canRead())
         {
-            System.out.println("XSQ file "+ xsqFilePath + " could not be read.");
+            System.err.println("XSQ file "+ xsqFilePath + " could not be read.");
             System.exit(1);  
         }      
         
@@ -234,7 +246,7 @@ public class XSQConverterGit {
         {
             if(!baseOutputDir.mkdirs())
             {
-                System.out.println("Output directory "+ baseOutputDir + " could not be created.");
+                System.err.println("Output directory "+ baseOutputDir + " could not be created.");
                 System.exit(1);                
             }
            
@@ -243,7 +255,7 @@ public class XSQConverterGit {
         {
             if(!baseOutputDir.isDirectory())
             {
-                System.out.println("Output directory "+ baseOutputDir + " is not a directory.");
+                System.err.println("Output directory "+ baseOutputDir + " is not a directory.");
                 System.exit(1);   
             } 
         }
@@ -267,8 +279,8 @@ public class XSQConverterGit {
     {
         String path = System.getProperty("java.library.path");
         
-        System.out.println("The Java Path = ");      
-        System.out.println(path);
+        System.err.println("The Java Path = ");      
+        System.err.println(path);
     }
 
     private static Map<String, String> getSpecifiedLibrarySubSet(CommandLine cmd) {        
@@ -304,14 +316,14 @@ public class XSQConverterGit {
         
         if(!matePairBarCodeFile.canRead())
         {
-            System.out.println("Can't read matePairBarCode file "+ matePairBarCodeFile.getPath());
+            System.err.println("Can't read matePairBarCode file "+ matePairBarCodeFile.getPath());
             System.exit(1);                    
         }
         try {
             BufferedReader in = new BufferedReader(new FileReader(matePairBarCodeFile));
             
-            System.out.println ("Reading barcodes");
-            System.out.println ("Barcode\tbarcodeName");
+            System.err.println ("Reading barcodes");
+            System.err.println ("Barcode\tbarcodeName");
             
             String line;
             while ((line = in.readLine()) != null)   
@@ -324,17 +336,17 @@ public class XSQConverterGit {
                 
                 
                 // Print the content on the console
-                System.out.println (line);
+                System.err.println (line);
             }
             
         } catch (Exception ex) {
-            System.out.println("Can't read matePairBarCode file "+ matePairBarCodeFile.getPath());
+            System.err.println("Can't read matePairBarCode file "+ matePairBarCodeFile.getPath());
             System.exit(1);       
         }
         
         if(matePairBarCodeMap.isEmpty())
         {
-            System.out.println("No 'barcode TAB barcodeName' entries found in  "+ matePairBarCodeFile.getPath());
+            System.err.println("No 'barcode TAB barcodeName' entries found in  "+ matePairBarCodeFile.getPath());
             System.exit(1);     
         }
         

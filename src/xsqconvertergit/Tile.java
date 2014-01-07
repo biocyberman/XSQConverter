@@ -65,7 +65,7 @@ public class Tile {
                 readCounter += tag.processTag(outPutWriter);
             }
         }
-        System.out.print("\rProcessed tile " + tileGroup.getName());
+        System.err.print("\rProcessed tile " + tileGroup.getName());
         return readCounter;
     }
 }

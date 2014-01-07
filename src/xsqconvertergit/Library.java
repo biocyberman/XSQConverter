@@ -68,7 +68,7 @@ public class Library {
         int tileCounter = 0;
         long readCounter = 0;
          
-        System.out.println("Processing "+name);
+        System.err.println("Processing "+name);
         for(Object tileObject : tileList)
         {
             Group tileGoup = (Group)tileObject;
@@ -78,7 +78,7 @@ public class Library {
         }       
         
         
-        System.out.println("\nProcessed "+tileCounter+ " tiles with a total of "+readCounter+ " reads"  );
+        System.err.println("\nProcessed "+tileCounter+ " tiles with a total of "+readCounter+ " reads"  );
         return readCounter;
     
     }   
