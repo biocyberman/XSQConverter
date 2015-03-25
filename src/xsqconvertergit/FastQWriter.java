@@ -7,6 +7,7 @@ package xsqconvertergit;
 import xsqconvertergit.interfaces.CSFastQEntryInterface;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.FileUtils;
 import xsqconvertergit.interfaces.FastaQualEntryInterface;
 
@@ -124,12 +126,14 @@ public class FastQWriter {
             File outPutChunk = new File(outputDirReads, chunkFastQFileName.toString());
             writtenFastQFiles.add(outPutChunk);
             FileWriter fstream;
-
             try {
-                    fstream = new FileWriter(outPutChunk);   
                     if(containsSequence){
-                         fastqOut = new BufferedWriter(fstream);         
+                        outPutChunk = new File(outputDirReads, chunkFastQFileName.toString() + ".gz");
+                        GZIPOutputStream zip = new GZIPOutputStream(new FileOutputStream(outPutChunk));   
+                        OutputStreamWriter out = new OutputStreamWriter(zip, "ASCII");
+                         fastqOut = new BufferedWriter(out);         
                     }else{
+                        fstream = new FileWriter(outPutChunk);
                         qualOut = new BufferedWriter(fstream);     
                     }
 
